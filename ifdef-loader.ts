@@ -64,7 +64,7 @@ export = function(source: string, sourceMap?: RawSourceMap) {
       source = parse(source, data, verbose, tripleSlash, filePath, fillWithBlanks, uncommentPrefix);
       const final = source.split(/\r\n|\n|\r/).length;
 
-      console.log("ifdef-loader source lines", {initial, final});
+      console.log("ifdef-loader source lines", {context: that.rootContext, path: that.resourcePath, initial, final}, "options:", originalData);
 
       return source;
    } catch(err) {
