@@ -24,8 +24,6 @@ export = function(source: string, sourceMap?: RawSourceMap) {
       return source;
    }
 
-   console.log("Sourcemap", sourceMap)
-
    const options: loaderUtils.OptionObject = loaderUtils.getOptions(that) || {};
    const originalData: IIfDefLoaderOptions = options.json || options;
 
@@ -62,7 +60,11 @@ export = function(source: string, sourceMap?: RawSourceMap) {
    }
 
    try {
+      const initial = source.split(/\r\n|\n|\r/).length;
       source = parse(source, data, verbose, tripleSlash, filePath, fillWithBlanks, uncommentPrefix);
+      const final = source.split(/\r\n|\n|\r/).length;
+
+      console.log("ifdef-loader source lines", {initial, final});
 
       return source;
    } catch(err) {
