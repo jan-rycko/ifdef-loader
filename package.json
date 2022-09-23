@@ -1,8 +1,7 @@
 {
   "name": "ifdef-loader-map-fix",
-  "version": "2.3.10",
+  "version": "2.3.11",
   "description": "",
-  "main": "ifdef-loader.js",
   "devDependencies": {
     "@types/jasmine": "^2.5.43",
     "@types/loader-utils": "^1.1.3",
