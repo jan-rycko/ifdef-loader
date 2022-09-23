@@ -2,7 +2,7 @@ import * as loaderUtils from 'loader-utils';
 import { parse } from './preprocessor';
 import * as path from 'path';
 
-export = function(source: string, map) {
+export = function(source: string) {
    this.cacheable && this.cacheable();
 
    const options: loaderUtils.OptionObject = loaderUtils.getOptions(this) || {};
@@ -41,7 +41,7 @@ export = function(source: string, map) {
 
    try {
       source = parse(source, data, verbose, tripleSlash, filePath, fillWithBlanks, uncommentPrefix);
-      this.callback(null, source, map);
+      this.callback(null, source);
    } catch(err) {
       const errorMessage = `ifdef-loader error: ${err}`;
       this.callback(new Error(errorMessage));

@@ -1,6 +1,6 @@
 {
-  "name": "ifdef-loader",
-  "version": "2.3.2",
+  "name": "ifdef-loader-map-fix",
+  "version": "2.3.3",
   "description": "",
   "main": "ifdef-loader.js",
   "devDependencies": {
@@ -24,6 +24,9 @@
     {
       "name": "Wisam Ghantous",
       "url": "https://github.com/gwigwam"
+    },
+    {
+      "name": "Jan Ryćko"
     }
   ],
   "license": "MIT",
