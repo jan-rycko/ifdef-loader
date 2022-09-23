@@ -58,8 +58,8 @@ export = function(source: string, sourceMap?: RawSourceMap) {
 
    try {
       source = parse(source, data, verbose, tripleSlash, filePath, fillWithBlanks, uncommentPrefix);
-      callback?.(null, source);
+      callback?.(null, source, sourceMap);
    } catch(err) {
-      callback?.(err);
+      callback?.(err, source, sourceMap);
    }
 };
