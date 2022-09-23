@@ -45,9 +45,6 @@ let fillCharacter: string;
 let uncommentPrefix: string | undefined;
 
 export function parse(source: string, defs: OptionObject, verbose?: boolean, tripleSlash?: boolean, filePath?: string, fillWithBlanks?: boolean, uncommentPrefixString?: string): string {
-   // early skip check: do not process file when no '#if' are contained
-   if(source.indexOf('#if') === -1) return source;
-
    if(tripleSlash === undefined) tripleSlash = true;
    useTripleSlash = tripleSlash;
 
@@ -56,6 +53,7 @@ export function parse(source: string, defs: OptionObject, verbose?: boolean, tri
 
    uncommentPrefix = uncommentPrefixString;
 
+   const splitter = /\r\n/.test(source) ? '\r\n' : '\n';
    const lines = source.split(/\r\n|\n|\r/);
 
    const ifBlocks = find_if_blocks(lines);
@@ -63,7 +61,7 @@ export function parse(source: string, defs: OptionObject, verbose?: boolean, tri
       apply_if(lines, ifBlock, defs, verbose, filePath);
    }
 
-   return lines.join('\n');
+   return lines.join(splitter);
 }
 
 function find_if_blocks(lines: string[]): IfBlock[] {

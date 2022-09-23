@@ -1,3 +1,6 @@
+// @ts-ignore
+// @ts-ignore
+
 import type {loader} from 'webpack';
 import type {RawSourceMap} from 'source-map';
 import * as loaderUtils from 'loader-utils';
@@ -11,10 +14,17 @@ interface IIfDefLoaderOptions {
    "ifdef-uncomment-prefix"?: string
 }
 
+// @ts-ignore
 export = function(source: string, sourceMap?: RawSourceMap) {
    const that: loader.LoaderContext = this;
 
    that.cacheable && that.cacheable(true);
+
+   if (!source.includes("#if")) {
+      return source;
+   }
+
+   console.log("Sourcemap", sourceMap)
 
    const options: loaderUtils.OptionObject = loaderUtils.getOptions(that) || {};
    const originalData: IIfDefLoaderOptions = options.json || options;
@@ -46,20 +56,18 @@ export = function(source: string, sourceMap?: RawSourceMap) {
 
    const uncommentPrefixFlag = "ifdef-uncomment-prefix";
    const uncommentPrefix = data[uncommentPrefixFlag];
+
    if(uncommentPrefix !== undefined) {
       delete data[uncommentPrefixFlag];
    }
 
-   const callback = that.async();
-
-   if (source.includes("#if")) {
-      console.log("Sourcemap for", sourceMap?.file, sourceMap?.sources)
-   }
-
    try {
       source = parse(source, data, verbose, tripleSlash, filePath, fillWithBlanks, uncommentPrefix);
-      callback?.(null, source, sourceMap);
+
+      return source;
    } catch(err) {
+      const callback = that.async();
+
       callback?.(err, source, sourceMap);
    }
 };
