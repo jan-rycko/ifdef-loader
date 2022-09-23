@@ -1,6 +1,6 @@
 {
   "name": "ifdef-loader-map-fix",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "description": "",
   "main": "ifdef-loader.js",
   "devDependencies": {
