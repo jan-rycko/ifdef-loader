@@ -1,11 +1,31 @@
+import type {LoaderContext, sources} from 'webpack';
 import * as loaderUtils from 'loader-utils';
 import { parse } from './preprocessor';
 import * as path from 'path';
 
-export = function(source: string) {
-   this.cacheable && this.cacheable();
+interface SourceMap {
+   version: number;
+   sources: string[];
+   mappings: string;
+   file?: string;
+   sourceRoot?: string;
+   sourcesContent?: string[];
+   names?: string[];
+}
 
-   const options: loaderUtils.OptionObject = loaderUtils.getOptions(this) || {};
+interface IIfDefLoaderOptions {
+   "ifdef-verbose"?: boolean
+   "ifdef-triple-slash"?: boolean
+   "ifdef-fill-with-blanks"?: boolean
+   "ifdef-uncomment-prefix"?: string
+}
+
+export = function(source: string, sourceMap?: SourceMap) {
+   const that: LoaderContext<IIfDefLoaderOptions> = this;
+
+   that.cacheable && that.cacheable(true);
+
+   const options: loaderUtils.OptionObject = loaderUtils.getOptions(that) || {};
    const originalData = options.json || options;
 
    const data = { ...originalData };
@@ -18,7 +38,7 @@ export = function(source: string) {
 
    let filePath: string | undefined = undefined;
    if(verbose) {
-      filePath = path.relative(this.rootContext || '', this.resourcePath);
+      filePath = path.relative(that.rootContext || '', that.resourcePath);
    }
 
    const tripleSlashFlag = "ifdef-triple-slash";
@@ -39,11 +59,16 @@ export = function(source: string) {
       delete data[uncommentPrefixFlag];
    }
 
+   const callback = that.async();
+
+   if (source.includes("#if")) {
+      console.log("Sourcemap for", sourceMap?.file, sourceMap?.sources)
+   }
+
    try {
       source = parse(source, data, verbose, tripleSlash, filePath, fillWithBlanks, uncommentPrefix);
-      this.callback(null, source);
+      callback(null, source);
    } catch(err) {
-      const errorMessage = `ifdef-loader error: ${err}`;
-      this.callback(new Error(errorMessage));
+      callback(err);
    }
 };

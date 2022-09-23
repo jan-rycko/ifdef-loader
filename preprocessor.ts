@@ -45,6 +45,9 @@ let fillCharacter: string;
 let uncommentPrefix: string | undefined;
 
 export function parse(source: string, defs: OptionObject, verbose?: boolean, tripleSlash?: boolean, filePath?: string, fillWithBlanks?: boolean, uncommentPrefixString?: string): string {
+   // early skip check: do not process file when no '#if' are contained
+   if(source.indexOf('#if') === -1) return source;
+
    if(tripleSlash === undefined) tripleSlash = true;
    useTripleSlash = tripleSlash;
 
@@ -52,9 +55,6 @@ export function parse(source: string, defs: OptionObject, verbose?: boolean, tri
    fillCharacter = fillWithBlanks ? ' ' : '/';
 
    uncommentPrefix = uncommentPrefixString;
-
-   // early skip check: do not process file when no '#if' are contained
-   if(source.indexOf('#if') === -1) return source;
 
    const lines = source.split(/\r\n|\n|\r/);
 
@@ -202,7 +202,7 @@ function apply_if(lines: string[], ifBlock: IfBlock, defs: OptionObject, verbose
    }
 
    // blanks everything except the part that has to be included
-   if(includeRange != null) {      
+   if(includeRange != null) {
       blank_code(lines, ifBlock.line_if, includeRange.from);   // blanks: #if ... "from"
       blank_code(lines, includeRange.to, ifBlock.line_endif);  // blanks: "to" ... #endif
       reveal_code(lines, includeRange.from, includeRange.to);  // reveal: "from" ... "to"
@@ -211,7 +211,7 @@ function apply_if(lines: string[], ifBlock: IfBlock, defs: OptionObject, verbose
    }
 
    // apply to inner #if blocks that have not already been erased
-   for(let innerIf of ifBlock.inner_ifs) {      
+   for(let innerIf of ifBlock.inner_ifs) {
       if(includeRange != null && innerIf.line_if >= includeRange.from && innerIf.line_if <= includeRange.to) {
          apply_if(lines, innerIf, defs, verbose);
       }
