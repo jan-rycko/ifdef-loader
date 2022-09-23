@@ -1,17 +1,8 @@
-import type {LoaderContext, sources} from 'webpack';
+import type {loader} from 'webpack';
+import type {RawSourceMap} from 'source-map';
 import * as loaderUtils from 'loader-utils';
 import { parse } from './preprocessor';
 import * as path from 'path';
-
-interface SourceMap {
-   version: number;
-   sources: string[];
-   mappings: string;
-   file?: string;
-   sourceRoot?: string;
-   sourcesContent?: string[];
-   names?: string[];
-}
 
 interface IIfDefLoaderOptions {
    "ifdef-verbose"?: boolean
@@ -20,13 +11,13 @@ interface IIfDefLoaderOptions {
    "ifdef-uncomment-prefix"?: string
 }
 
-export = function(source: string, sourceMap?: SourceMap) {
-   const that: LoaderContext<IIfDefLoaderOptions> = this;
+export = function(source: string, sourceMap?: RawSourceMap) {
+   const that: loader.LoaderContext = this;
 
    that.cacheable && that.cacheable(true);
 
    const options: loaderUtils.OptionObject = loaderUtils.getOptions(that) || {};
-   const originalData = options.json || options;
+   const originalData: IIfDefLoaderOptions = options.json || options;
 
    const data = { ...originalData };
 
@@ -67,8 +58,8 @@ export = function(source: string, sourceMap?: SourceMap) {
 
    try {
       source = parse(source, data, verbose, tripleSlash, filePath, fillWithBlanks, uncommentPrefix);
-      callback(null, source);
+      callback?.(null, source);
    } catch(err) {
-      callback(err);
+      callback?.(err);
    }
 };
